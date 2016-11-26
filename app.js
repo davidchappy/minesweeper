@@ -8,7 +8,7 @@
 // global variables
 var boardElement = document.getElementById('board');
 var dashboard = document.getElementById('dashboard');
-var boardSize = 144;
+const boardSize = 144;
 
 // objects
 var board = {
