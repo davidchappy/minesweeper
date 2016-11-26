@@ -1,0 +1,56 @@
+/*  Base styles */
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  line-height: 0;
+}
+
+body {
+  padding-top: 1em;
+  background: #B8E986;
+}
+
+h1, p {
+  text-align: center;  
+}
+
+h1 {
+  margin-bottom: 2em;
+  margin-top: 1em;
+  line-height: 0;
+  color: #324654;
+}
+
+a {
+  text-decoration: none;
+  color: #F6A623;
+}
+
+.reference {
+  margin-top: 1em;
+  color: #324654;
+}
+
+#dashboard {
+  color: #F6A623;
+}
+/* Board styles */
+
+.board {
+  margin: 1em auto;
+  border: 3px solid #324654;
+}
+
+.board div {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #324654;
+  float: left;
+  box-sizing: border-box;
+}
+
+.board .blank {
+  cursor: pointer;
+}
