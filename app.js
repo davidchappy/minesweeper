@@ -9,11 +9,14 @@
 var $boardElement = $('#board');
 var $squaresDiv = $('#squares');
 var $dashboard = $('#dashboard');
+var $smiley = $('#smiley');
 const boardSize = 144;
 
 // objects
 var board = {
   board: [],
+  bombs: [],
+  flags: [],
   xLength: Math.sqrt(boardSize),
   initBoard: function() {
     // Set outer div's height and width relative to chosen boardSize
@@ -21,7 +24,7 @@ var board = {
     $boardElement.height((this.xLength * 30) + 50);
     $squaresDiv.height(this.xLength * 30);
     $squaresDiv.width(this.xLength * 30);
-        
+
     for(var i = 0; i < boardSize; i++) {
       // fill board.board object with class names
       this.board[i] = "hidden";
@@ -32,16 +35,27 @@ var board = {
         return "box" + (i + 1);
       });
     }
+
+    this.fillBombs();
   },
   render: function() {
     // name all board div children with classes from board property
-    var children = $squaresDiv.children;
+    var children = $squaresDiv.children();
     for(var i = 0; i < boardSize; i++) {
-      row = Math.floor(i / this.xLength);
-      children[i].addClass(this.board[i]);
+      children[i].className = this.board[i];
     }
   },
   isAdjacent: function(currentBox, targetBox) {
+    let adjacentBoxes = this.getAdjacent(currentBox);
+    if(adjacentBoxes && adjacentBoxes.includes(targetBox)) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+  getAdjacent: function(currentBox) {
+    let adjacent = [];
+
     // check if on first row or last row
     if(currentBox < this.xLength) {
       var firstRow = true;
@@ -56,32 +70,149 @@ var board = {
       var lastCol = true;
     }
 
-    if ((targetBox === currentBox + 13 && !lastCol)
-      || targetBox === currentBox + 12
-      || targetBox === currentBox + 11 && !firstCol) {
+    // Capture each direction in a variable
+    let downLeft = currentBox + 11;
+    let down = currentBox + 12;
+    let downRight = currentBox + 13;
+    let upLeft = currentBox - 13;
+    let up = currentBox - 12;
+    let upRight = currentBox - 11;
+    let left = currentBox - 1;
+    let right = currentBox + 1;
+
+    // Add each direction to adjacent array unless target is off the board
+    if(!firstCol) {
       if(!lastRow) {
-        return true;
+        adjacent.push(downLeft);
       }
-    } else if ((targetBox === currentBox - 13 && !firstCol)
-      || targetBox === currentBox - 12
-      || targetBox === currentBox - 11 && !lastCol) {
       if(!firstRow) {
-        return true;
+        adjacent.push(upLeft);
       }
-    } else if ((targetBox === currentBox - 1 && !firstCol)
-      || targetBox === currentBox + 1 && !lastCol) {
-      return true;
+      adjacent.push(left);
+    }
+
+    if(!lastCol) {
+      if(!lastRow) {
+        adjacent.push(downRight);
+      }
+      if(!firstRow) {
+        adjacent.push(upRight);
+      }
+      adjacent.push(right);
+    }
+
+    if(!firstRow) {
+      adjacent.push(up);
     } 
-    return false;
+    if(!lastRow) {
+      adjacent.push(down);
+    }
+
+    return adjacent;
   },
   onBoard: function(boxIndex) {
-    return this.board[boxIndex] != undefined;
+    if(this.board[boxIndex] != undefined) {
+      return true;
+    } else {
+      return false;
+    };
   },
+  fillBombs: function() {
+    // Fill board.bombs with 'blank' first
+    for(var i = 0; i < this.board.length; i++) {
+      this.bombs[i] = 'blank';
+    }
+
+    // Randomly fill 15% of board.bomb with 'bomb' 
+    let quantity = Math.floor(boardSize * 0.15);
+    let bombs = [];
+    while(bombs.length < quantity){
+      var randomnumber = Math.ceil(Math.random() * boardSize)
+      if(bombs.indexOf(randomnumber) > -1) continue;
+      bombs[bombs.length] = randomnumber;
+      board.bombs[randomnumber] = 'bomb';
+    }
+  }
 }
 
-board.initBoard.call(board);
-board.render.call(board);
+var game = {
+  run: function() {
+    board.initBoard.call(board);
+    board.render.call(board);
+    this.listen();
+  },
+  listen: function() {
+    // Reset with smiley face
+    $('#board').on('click', '#smiley', function() {
+      location.reload();
+    });
 
+    // When hidden tile is clicked, reveal
+    $('#board').on('click', '.hidden', function(event) {
+      if(!$(this).hasClass('flagged')) {
+        let squareIndex = $(this).index();
+
+        // If clicked on bomb, run game over; otherwise reveal the tile
+        if(board.bombs[squareIndex] === "bomb") {
+          console.log("bomb!");
+          game.gameOver(false, squareIndex);
+          return;
+        } else {
+          board.board[squareIndex] = 'revealed';
+
+          // // Loop through adjacent tiles marking as revealed until there are no more
+          // let hasAdjacent = true;
+          // let currentTile = this;
+          // let adjacentTiles = [];
+          // let checked = board.board;
+          // while(hasAdjacent) {
+          //   checked[currentTile] = "checked";
+          //   adjacentTiles = board.getAdjacent.apply(board, currentTile);
+          //   if(adjacentTiles) {
+          //     $.each(adjacentTiles, function(index, value) {
+          //       if(board.onBoard(value)
+          //         && board.bombs[value] != 'bomb' 
+          //         && board.flags[value] != 'flagged'
+          //         && checked[currentTile] != 'checked'
+          //         ) {
+          //         board.board[value] = 'revealed';
+          //         checked[currentTile] = 'checked';
+          //         currentTile = value;  
+          //       } else {
+          //         return;
+          //       }
+          //     });
+          //   } else {
+          //     hasAdjacent = false;
+          //   }
+          // }
+        }
+      }
+      board.render();
+    });
+
+  },
+  gameOver: function(victory, bombTile) {
+    if(victory) {
+
+    } else {
+      $.each(board.board, function(index,value) {
+        if(value.includes('hidden')) {
+          var newValue = value.replace('hidden', 'revealed');
+          board.board[index] = newValue;
+        }
+        if(board.bombs[index] === 'bomb') {
+          board.board[index] = 'bomb';  
+        }
+      });
+      board.board[bombTile] += ' exploded'; 
+      board.render();
+
+    }
+  }
+}
+
+game.run.call(game);
 
 
 // TESTS FOR BOARD.isADJACENT()

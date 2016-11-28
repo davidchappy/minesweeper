@@ -2,7 +2,7 @@
 @font-face {
   font-family: 'digital-7';
   src: url('fonts/digital-7.ttf') format('truetype');
-  src: url('fonts/digital-7-mono.ttf') format('truetype');
+  src: url('fonts/digit-7-mono.ttf') format('truetype');
 }
 
 * {
@@ -100,6 +100,8 @@ a {
 
 /* Board styles */
 .board {
+  width: 378px;
+  height: 424px;
   box-sizing: border-box;
   position: relative;
   margin: 1em auto 2em;
@@ -158,6 +160,7 @@ a {
   background-repeat: no-repeat;
   background-size: 24px 24px;
   background-position: center center; 
+  border: 1px solid #686868;
 }
 
 .exploded {
