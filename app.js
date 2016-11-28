@@ -1,11 +1,11 @@
-window.mineSweeper = (function(mineSweeper, $, undefined) {
+// window.mineSweeper = (function(mineSweeper, $, undefined) {
 
   // global variables
   var $boardElement = $('#board');
   var $squaresDiv = $('#squares');
   var $dashboard = $('#dashboard');
   var $smiley = $('#smiley');
-  const boardSize = 144;
+  const boardSize = 256;
 
   // objects
   var board = {
@@ -54,7 +54,7 @@ window.mineSweeper = (function(mineSweeper, $, undefined) {
       // check if on first row or last row
       if(currentBox < this.xLength) {
         var firstRow = true;
-      } else if (currentBox > (this.board.length - (this.xLength + 1))) {
+      } else if (currentBox > (boardSize - (this.xLength + 1))) {
         var lastRow = true;
       }
 
@@ -66,12 +66,12 @@ window.mineSweeper = (function(mineSweeper, $, undefined) {
       }
 
       // Capture each direction in a variable
-      let downLeft = currentBox + 11;
-      let down = currentBox + 12;
-      let downRight = currentBox + 13;
-      let upLeft = currentBox - 13;
-      let up = currentBox - 12;
-      let upRight = currentBox - 11;
+      let downLeft = currentBox + (board.xLength - 1);
+      let down = currentBox + board.xLength;
+      let downRight = currentBox + (board.xLength + 1);
+      let upLeft = currentBox - (board.xLength + 1);
+      let up = currentBox - board.xLength;
+      let upRight = currentBox - (board.xLength - 1);
       let left = currentBox - 1;
       let right = currentBox + 1;
 
@@ -244,7 +244,7 @@ window.mineSweeper = (function(mineSweeper, $, undefined) {
         });
         board.render();
       } else {
-        $('#smiley').css('background-image', 'url("images/sad.png")');
+        $('#smiley').css('background-image', 'url("images/sad.jpg")');
         $.each(board.board, function(index,value) {
           board.reveal(index);
           if(board.bombs[index] === 'bomb') {
@@ -259,7 +259,7 @@ window.mineSweeper = (function(mineSweeper, $, undefined) {
 
   game.run.call(game);
 
-  return mineSweeper;
-})(window.mineSweeper || {}, jQuery);
+  // return mineSweeper;
+// })(window.mineSweeper || {}, jQuery);
 
 
