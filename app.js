@@ -1,14 +1,14 @@
-// window.mineSweeper = (function(mineSweeper, undefined) {
+// window.mineSweeper = (function(mineSweeper, $, undefined) {
 //   // Add code in here when ready
 
 //   return mineSweeper;
-// })(window.mineSweeper || {});
+// })(window.mineSweeper || {}, jQuery);
 
 
 // global variables
-var boardElement = document.getElementById('board');
-var squaresDiv = document.getElementById('squares');
-var dashboard = document.getElementById('dashboard');
+var $boardElement = $('#board');
+var $squaresDiv = $('#squares');
+var $dashboard = $('#dashboard');
 const boardSize = 144;
 
 // objects
@@ -17,28 +17,28 @@ var board = {
   xLength: Math.sqrt(boardSize),
   initBoard: function() {
     // Set outer div's height and width relative to chosen boardSize
-    boardElement.style.width = ((this.xLength * 30) + 18) + "px";
-    boardElement.style.height = ((this.xLength * 30) + 60)  + "px";
-    squaresDiv.style.height = ((this.xLength * 30) + 4) + "px";
-    squaresDiv.style.width = ((this.xLength * 30) + 4)  + "px";
+    $boardElement.width((this.xLength * 30) + 4);
+    $boardElement.height((this.xLength * 30) + 50);
+    $squaresDiv.height(this.xLength * 30);
+    $squaresDiv.width(this.xLength * 30);
         
     for(var i = 0; i < boardSize; i++) {
       // fill board.board object with class names
       this.board[i] = "hidden";
 
       // intialize html board with divs and ids
-      var newDiv = document.createElement('div');
-      newDiv.id = "box" + (i + 1);
-      newDiv.className = "hidden";
-      squaresDiv.appendChild(newDiv);
+      $squaresDiv.append('<div class="hidden"></div>');
+      $('#squares div:last').attr('id', function(index) {
+        return "box" + (i + 1);
+      });
     }
   },
   render: function() {
     // name all board div children with classes from board property
-    var children = squaresDiv.children;
+    var children = $squaresDiv.children;
     for(var i = 0; i < boardSize; i++) {
       row = Math.floor(i / this.xLength);
-      children[i].className = this.board[i];
+      children[i].addClass(this.board[i]);
     }
   },
   isAdjacent: function(currentBox, targetBox) {
