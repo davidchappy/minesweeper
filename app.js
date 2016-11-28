@@ -142,10 +142,15 @@
           checked[clickedSquare] = 'checked';
         }
       }
-      if(board.bombs[clickedSquare] === 'bomb') {
+      if(board.bombs[clickedSquare] === 'bomb' 
+        || board.board[clickedSquare].includes('flagged')) {
         return;
       } else {
         this.reveal(clickedSquare);
+        // if(this.board[clickedSquare].includes('flagged')) {
+        //   var newValue = this.board[square].replace(' flagged', '');
+        //   this.board[square] = newValue;
+        // }
         if(board.numbers[clickedSquare] > 0) {
           return;
         }
@@ -176,13 +181,15 @@
     },
     toggleFlag: function(square) {
       if(this.board[square].includes('flagged')) {
-        console.log("includes");
         var newValue = this.board[square].replace(' flagged', '');
         this.board[square] = newValue;
       } else {
-        console.log("doesn't include");
         this.board[square] += ' flagged';
       }
+    },
+    removeFlag: function(square) {
+      var newValue = this.board[square].replace(' flagged', '');
+      this.board[square] = newValue;
     },
     checkForVictory: function() {
       var victory = true;
@@ -194,6 +201,14 @@
       if(victory) {
         game.gameOver.call(game, true);
       }
+    },
+    reset: function() {
+      this.board = [];
+      this.bombs = [];
+      this.numbers = [];
+      this.xLength = 0;
+      $squaresDiv.empty();
+      $(document).add('*').off();
     }
   }
 
@@ -215,19 +230,19 @@
       $('#game-options').on('click', '#beginner', function() {
         $('#game-options').hide();
         boardSize = 64;
-        $squaresDiv.empty();
+        board.reset();
         game.run();
       });
       $('#game-options').on('click', '#intermediate', function() {
         $('#game-options').hide();
         boardSize = 144;
-        $squaresDiv.empty();
+        board.reset();
         game.run();
       });
       $('#game-options').on('click', '#expert', function() {
         $('#game-options').hide();
         boardSize = 256;
-        $squaresDiv.empty();
+        board.reset();
         game.run();
       });
 
@@ -274,7 +289,13 @@
       } else {
         $('#smiley').css('background-image', 'url("images/sad.jpg")');
         $.each(board.board, function(index,value) {
-          board.reveal(index);
+          if(value.includes('flagged') && board.bombs[index] != 'bomb') {
+            // board.removeFlag(board.board[index]);
+            board.reveal(index);
+            board.board[index] += ' wrong';
+          } else {
+            board.reveal(index);
+          }
           if(board.bombs[index] === 'bomb') {
             board.board[index] = 'bomb';  
           }
