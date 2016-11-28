@@ -17,6 +17,7 @@ var board = {
   board: [],
   bombs: [],
   flags: [],
+  numbers: [],
   xLength: Math.sqrt(boardSize),
   initBoard: function() {
     // Set outer div's height and width relative to chosen boardSize
@@ -110,17 +111,15 @@ var board = {
 
     return adjacent;
   },
-  onBoard: function(boxIndex) {
-    if(this.board[boxIndex] != undefined) {
-      return true;
-    } else {
-      return false;
-    };
-  },
   fillBombs: function() {
     // Fill board.bombs with 'blank' first
     for(var i = 0; i < this.board.length; i++) {
       this.bombs[i] = 'blank';
+    }
+
+    // Initialize board.numbers array with 0's
+    for(var i = 0; i < boardSize; i++) {
+      this.numbers[i] = 0;
     }
 
     // Randomly fill 15% of board.bomb with 'bomb' 
@@ -131,6 +130,53 @@ var board = {
       if(bombs.indexOf(randomnumber) > -1) continue;
       bombs[bombs.length] = randomnumber;
       board.bombs[randomnumber] = 'bomb';
+      var adjacents = this.getAdjacent(randomnumber);
+      for(var i = 0; i < adjacents.length; i++) {
+        board.numbers[adjacents[i]] += 1;
+      }
+    }
+  },
+  revealAdjacentSquares: function(clickedSquare, checked) {
+    // Loop through adjacent tiles marking as revealed until there are no more
+    if(!checked) {
+      checked = [];
+    } else {
+      if(checked[clickedSquare] === 'checked') {
+        return;
+      } else {
+        checked[clickedSquare] = 'checked';
+      }
+    }
+    if(board.bombs[clickedSquare] === 'bomb') {
+      return;
+    } else {
+      this.reveal(clickedSquare);
+      if(board.numbers[clickedSquare] > 0) {
+        return;
+      }
+    }
+    var adjacents = this.getAdjacent(clickedSquare);
+    if(adjacents && adjacents.some(this.hasHiddenSquares)) {
+        for(var i = 0; i < adjacents.length; i++) {
+          let square = adjacents[i];
+          this.revealAdjacentSquares(square, checked);
+        } 
+      } else {
+        return;
+    }
+  },
+  hasHiddenSquares: function(element, index, array) {
+    return board.board[element] === "hidden"
+  },
+  reveal: function(square) {
+    if(board.board[square].includes('hidden')) {
+      var newValue = board.board[square].replace('hidden', 'revealed');
+      if(board.numbers[square] > 0) {
+        newValue += ' count' + board.numbers[square];
+      }
+      board.board[square] = newValue;
+    } else {
+      return;
     }
   }
 }
@@ -154,38 +200,10 @@ var game = {
 
         // If clicked on bomb, run game over; otherwise reveal the tile
         if(board.bombs[squareIndex] === "bomb") {
-          console.log("bomb!");
           game.gameOver(false, squareIndex);
           return;
         } else {
-          board.board[squareIndex] = 'revealed';
-
-          // // Loop through adjacent tiles marking as revealed until there are no more
-          // let hasAdjacent = true;
-          // let currentTile = this;
-          // let adjacentTiles = [];
-          // let checked = board.board;
-          // while(hasAdjacent) {
-          //   checked[currentTile] = "checked";
-          //   adjacentTiles = board.getAdjacent.apply(board, currentTile);
-          //   if(adjacentTiles) {
-          //     $.each(adjacentTiles, function(index, value) {
-          //       if(board.onBoard(value)
-          //         && board.bombs[value] != 'bomb' 
-          //         && board.flags[value] != 'flagged'
-          //         && checked[currentTile] != 'checked'
-          //         ) {
-          //         board.board[value] = 'revealed';
-          //         checked[currentTile] = 'checked';
-          //         currentTile = value;  
-          //       } else {
-          //         return;
-          //       }
-          //     });
-          //   } else {
-          //     hasAdjacent = false;
-          //   }
-          // }
+          board.revealAdjacentSquares.call(board, squareIndex);
         }
       }
       board.render();
@@ -197,17 +215,13 @@ var game = {
 
     } else {
       $.each(board.board, function(index,value) {
-        if(value.includes('hidden')) {
-          var newValue = value.replace('hidden', 'revealed');
-          board.board[index] = newValue;
-        }
+        board.reveal(index);
         if(board.bombs[index] === 'bomb') {
           board.board[index] = 'bomb';  
         }
       });
       board.board[bombTile] += ' exploded'; 
       board.render();
-
     }
   }
 }
