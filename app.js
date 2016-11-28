@@ -16,7 +16,6 @@ const boardSize = 144;
 var board = {
   board: [],
   bombs: [],
-  flags: [],
   numbers: [],
   xLength: Math.sqrt(boardSize),
   initBoard: function() {
@@ -178,6 +177,27 @@ var board = {
     } else {
       return;
     }
+  },
+  toggleFlag: function(square) {
+    if(this.board[square].includes('flagged')) {
+      console.log("includes");
+      var newValue = this.board[square].replace(' flagged', '');
+      this.board[square] = newValue;
+    } else {
+      console.log("doesn't include");
+      this.board[square] += ' flagged';
+    }
+  },
+  checkForVictory: function() {
+    var victory = true;
+    for(var i = 0; i < boardSize; i++) {
+      if(this.bombs[i] != 'bomb' && this.hasHiddenSquares(i)) {
+        victory = false;
+      }
+    }
+    if(victory) {
+      game.gameOver.call(game, true);
+    }
   }
 }
 
@@ -195,6 +215,7 @@ var game = {
 
     // When hidden tile is clicked, reveal
     $('#board').on('click', '.hidden', function(event) {
+      event.preventDefault();
       if(!$(this).hasClass('flagged')) {
         let squareIndex = $(this).index();
 
@@ -207,13 +228,28 @@ var game = {
         }
       }
       board.render();
+      board.checkForVictory.call(board);  
     });
 
+    $('#board').on('contextmenu', '.hidden', function(event) {
+      event.preventDefault();
+      var squareIndex = $(this).index();
+      board.toggleFlag.call(board, squareIndex);
+      board.render();  
+      board.checkForVictory.call(board); 
+    });
   },
   gameOver: function(victory, bombTile) {
     if(victory) {
-
+      $('#smiley').css('background-image', 'url("images/shades.png")');
+      $.each(board.board, function(index, value) {
+        if(board.bombs[value] === 'bomb') {
+          board.flagged[value] === 'flagged';
+        }
+      });
+      board.render();
     } else {
+      $('#smiley').css('background-image', 'url("images/sad.png")');
       $.each(board.board, function(index,value) {
         board.reveal(index);
         if(board.bombs[index] === 'bomb') {
