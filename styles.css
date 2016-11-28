@@ -127,20 +127,79 @@ a {
   border-left: 2px solid  #686868;
   border-right: 2px solid  #FAFAFA;
   border-bottom: 2px solid  #FAFAFA;
+  font-family: 'digital-7', sans-serif;
 }
 
 #squares > div {
   display: inline-block;
   width: 30px;
   height: 30px;
-  border-top: 2px solid #FFFFFF;
-  border-left: 2px solid #FFFFFF;
-  border-right: 2px solid #686868;
-  border-bottom: 2px solid #686868;
   float: left;
   box-sizing: border-box;
+  line-height: 32px;
+  font-size: 2em;
+  text-align: center;
 }
 
 .hidden {
   cursor: pointer;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-right: 2px solid #686868;
+  border-bottom: 2px solid #686868;
+}
+
+.revealed {
+  border: 1px solid #686868;
+}
+
+.bomb {
+  background-image: url('images/bomb.png');
+  background-repeat: no-repeat;
+  background-size: 24px 24px;
+  background-position: center center; 
+}
+
+.exploded {
+  background-color: #FF0000;
+}
+
+.count1::before {
+  color: #0000FF;
+  content: '1';
+}
+
+.count2::before {
+  color: #046C00;
+  content: '2';
+}
+
+.count3::before {
+  color: #FF0000;
+  content: '3';
+}
+
+.count4::before {
+  color: #00006A;
+  content: '4';
+}
+
+.count5::before {
+  color: #680000;
+  content: '5';
+}
+
+.count6::before {
+  color: #0E6E6C;
+  content: '6';
+}
+
+.count7::before {
+  color: #000000;
+  content: '7';
+}
+
+.count8::before {
+  color: #6D6D6D;
+  content: '8';
 }
