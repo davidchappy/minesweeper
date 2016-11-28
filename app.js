@@ -5,15 +5,16 @@
   var $squaresDiv = $('#squares');
   var $dashboard = $('#dashboard');
   var $smiley = $('#smiley');
-  const boardSize = 256;
+  var boardSize = 144;
 
   // objects
   var board = {
     board: [],
     bombs: [],
     numbers: [],
-    xLength: Math.sqrt(boardSize),
+    xLength: 0,
     initBoard: function() {
+      this.xLength = Math.sqrt(boardSize);
       // Set outer div's height and width relative to chosen boardSize
       $boardElement.width((this.xLength * 30) + 4);
       $boardElement.height((this.xLength * 30) + 50);
@@ -203,6 +204,33 @@
       this.listen();
     },
     listen: function() {
+      // Set game difficulty
+      $(document.body).on('click', '#options-toggle', function(e) {
+        e.preventDefault();
+        $('#game-options').show();
+      });
+      $('#game-options').on('click', '#close-options', function() {
+        $('#game-options').hide();
+      });
+      $('#game-options').on('click', '#beginner', function() {
+        $('#game-options').hide();
+        boardSize = 64;
+        $squaresDiv.empty();
+        game.run();
+      });
+      $('#game-options').on('click', '#intermediate', function() {
+        $('#game-options').hide();
+        boardSize = 144;
+        $squaresDiv.empty();
+        game.run();
+      });
+      $('#game-options').on('click', '#expert', function() {
+        $('#game-options').hide();
+        boardSize = 256;
+        $squaresDiv.empty();
+        game.run();
+      });
+
       // Reset with smiley face
       $('#board').on('click', '#smiley', function() {
         location.reload();

@@ -15,6 +15,9 @@
 body {
   padding-top: 1em;
   background: #B3B3B3;
+  font-family: helvetica, arial, sans-serif;
+  font-size: 16px;
+  position: relative;
 }
 
 h1, p {
@@ -22,17 +25,82 @@ h1, p {
 }
 
 h1 {
-  margin-bottom: 2em;
+  margin-bottom: 1em;
   margin-top: 1em;
   line-height: 0;
   color: #324654;
-  font-family: helvetica, arial, sans-serif;
   text-transform: uppercase;
+}
+
+#options-toggle {
+  display: block;
+  text-align: center;
+  cursor: pointer;
+}
+
+#game-options {
+  z-index: 101;
+  padding: 3em 1em 0 1em;
+  display: none;
+  width:150px;
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  margin-left: -75px;
+  text-align: left;
+  background: #B3B3B3;
+  border: 1px solid #000;
+  box-shadow: 0 0 0 3px #B3B3B3;
+}
+
+#game-options::before {
+  content: '';
+  z-index: -1;
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  bottom: -3px;
+  right: -3px;
+  border: 1px solid #6D6D6D;
+}
+
+#close-options {
+  position: absolute;
+  top: 15px; 
+  width: 50px;
+  left: 50%;
+  margin-left: -25px;
+  cursor: pointer;
+}
+
+#game-options p {
+  text-align: left;
+  margin-bottom: 1em;
+}
+
+#game-options li {
+  display: block;
+  line-height: 1;
+  margin-bottom: 0.5em;
+  cursor: pointer;
+  margin-left: 1em;
+}
+
+#game-options li:hover {
+  color: #eaeaea;
+}
+
+.checked {
+  font-weight: bold;
 }
 
 a {
   text-decoration: none;
   color: #fff;
+}
+
+a:hover {
+  color: #eaeaea;
 }
 
 .reference {
@@ -104,7 +172,7 @@ a {
   height: 424px;
   box-sizing: border-box;
   position: relative;
-  margin: 1em auto 2em;
+  margin: 2em auto 2em;
   border: 7px solid #AFAFAF;
 }
 
